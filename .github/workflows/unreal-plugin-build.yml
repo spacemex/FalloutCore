@@ -9,13 +9,13 @@ on:
   workflow_dispatch:
 
 env:
-  ENGINE_PATH: ${{ secrets.ENGINE_PATH }}
+  ENGINE_PATH: ${{ secrets.ENGINE_PATH }}  # Adjust this to your local UE path
   PLUGIN_NAME: "FalloutCore"
   BADGE_PATH: "./badges"
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: self-hosted  # Changed to self-hosted runner
     
     steps:
       - name: Checkout Repository
