@@ -31,7 +31,7 @@ jobs:
       - name: Generate Build Status Badge
         uses: schneegans/dynamic-badges-action@v1.6.0
         with:
-          auth: ${{ secrets.GIST_SECRET }}
+          auth: ${{ vars.GIST_SECRET }}
           gistID: 1ecc5322c5f14f2d9b769a82f6793e60
           filename: unreal_plugin_build_status.json
           label: build
