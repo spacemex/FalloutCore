@@ -12,6 +12,7 @@ env:
   ENGINE_PATH: ${{ secrets.ENGINE_PATH }} #Local Engine Path For Runner
   PLUGIN_NAME: "FalloutCore" #UPlugin Name
   BADGE_PATH: "./badges"
+  GIST_ID: "265083e784c36d7e25b4fe8415ba7a56"
 
 jobs:
   build:
@@ -39,6 +40,7 @@ jobs:
           label: build
           message: ${{ steps.build.outcome == 'success' && 'passing' || 'failing' }}
           color: ${{ steps.build.outcome == 'success' && 'success' || 'critical' }}
+          debug: true
 
       - name: Create ZIP Archive
         if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
