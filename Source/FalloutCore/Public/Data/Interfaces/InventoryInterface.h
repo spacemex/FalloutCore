@@ -20,7 +20,5 @@ class FALLOUTCORE_API IInventoryInterface
 public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Inventory | Interface")
 	void OnUse(AActor* Actor);
-	UFUNCTION(BlueprintNativeEvent, Category = "Inventory | Interface")
-	void OnEquipped(AActor* Actor);
 	
 };
