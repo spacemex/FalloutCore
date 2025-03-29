@@ -6,20 +6,21 @@
 #include "UObject/Interface.h"
 #include "InventoryInterface.generated.h"
 
-// This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(Blueprintable)
 class UInventoryInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class FALLOUTCORE_API IInventoryInterface
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintNativeEvent, Category = "Inventory | Interface")
+	void OnUse(AActor* Actor);
+	UFUNCTION(BlueprintNativeEvent, Category = "Inventory | Interface")
+	void OnEquipped(AActor* Actor);
+	
 };

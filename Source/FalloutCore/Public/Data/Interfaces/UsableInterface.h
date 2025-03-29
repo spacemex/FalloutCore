@@ -6,20 +6,36 @@
 #include "UObject/Interface.h"
 #include "UsableInterface.generated.h"
 
-// This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(Blueprintable)
 class UUsableInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class FALLOUTCORE_API IUsableInterface
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintNativeEvent, Category = "Usable | Interface")
+	void OnInteract(AActor* Actor);
+	UFUNCTION(BlueprintNativeEvent, Category = "Usable | Interface")
+	void OnFocus();
+};
+
+UINTERFACE(NotBlueprintable)
+class UVirtualUsableInterface : public UInterface
+{
+	GENERATED_BODY()
+};
+
+
+class FALLOUTCORE_API IVirtualUsableInterface
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Usable | Interface")
+	virtual FText GetDisplayMessage() = 0;
 };
