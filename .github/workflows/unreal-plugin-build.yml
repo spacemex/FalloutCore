@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  ENGINE_PATH: ${{ secrets.ENGINE_PATH }}  # Adjust this to your local UE path
+  ENGINE_PATH: "E:\Engines\UE_5.5"  # Adjust this to your local UE path
   PLUGIN_NAME: "FalloutCore"
   BADGE_PATH: "./badges"
 
@@ -26,7 +26,7 @@ jobs:
         shell: cmd
         continue-on-error: true
         run: |
-          set UAT="%ENGINE_PATH%\Engine\Build\BatchFiles\RunUAT.bat"
+          set UAT="E:\Engines\UE_5.5\Engine\Build\BatchFiles\RunUAT.bat"
           call %UAT% BuildPlugin -plugin="${{github.workspace}}/FalloutCore.uplugin" -package="./PackagedPlugin"
 
       - name: Generate Build Status Badge
