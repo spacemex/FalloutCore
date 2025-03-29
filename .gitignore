@@ -1,2 +1,4 @@
-/Intermediate/
+*/Intermediate/
 /Binaries/
+
+**/Intermediate/Build/**/Definitions.FalloutCore.h
