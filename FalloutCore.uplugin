@@ -1,0 +1,23 @@
+﻿{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "FalloutCore",
+	"Description": "Framework For Making Fallout In Unreal Engine",
+	"Category": "Gameplay",
+	"CreatedBy": "Space_Mex(Deven Shona)",
+	"CreatedByURL": "https://github.com/spacemex",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "FalloutCore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
