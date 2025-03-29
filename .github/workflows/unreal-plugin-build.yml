@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  ENGINE_PATH: ${{ secrets.ENGINE_PATH }}  # Adjust this to your local UE path
+  ENGINE_PATH: "E:\Engines\UE_5.5"  # Adjust this to your local UE path
   PLUGIN_NAME: "FalloutCore"
   BADGE_PATH: "./badges"
 
