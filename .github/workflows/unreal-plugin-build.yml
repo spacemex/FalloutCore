@@ -9,12 +9,14 @@ on:
   workflow_dispatch:
 
 env:
-  PLUGIN_NAME: "FalloutCore"
+  ENGINE_PATH: ${{ secrets.ENGINE_PATH }} #Local Engine Path For Runner
+  PLUGIN_NAME: "FalloutCore" #UPlugin Name
   BADGE_PATH: "./badges"
 
 jobs:
   build:
     runs-on: self-hosted  # Changed to self-hosted runner
+    environment: FalloutCore
     
     steps:
       - name: Checkout Repository
@@ -25,13 +27,13 @@ jobs:
         shell: cmd
         continue-on-error: true
         run: |
-          set UAT="E:\Engines\UE_5.5\Engine\Build\BatchFiles\RunUAT.bat"
-          call %UAT% BuildPlugin -plugin="${{github.workspace}}/FalloutCore.uplugin" -package="./PackagedPlugin"
+          set UAT="${{ env.ENGINE_PATH }}Engine\Build\BatchFiles\RunUAT.bat"
+          call %UAT% BuildPlugin -plugin="${{github.workspace}}/${{ env.PLUGIN_NAME }}.uplugin" -package="./PackagedPlugin"
 
       - name: Generate Build Status Badge
         uses: schneegans/dynamic-badges-action@v1.6.0
         with:
-          auth: ${{ vars.GIST_SECRET }}
+          auth: ${{ secrets.GIST_SECRET }}
           gistID: 1ecc5322c5f14f2d9b769a82f6793e60
           filename: unreal_plugin_build_status.json
           label: build
