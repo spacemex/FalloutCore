@@ -1,46 +1,46 @@
-﻿name: Unreal Plugin Build and Release
+﻿name: Unreal Plugin Build and Release #(Windows)
 
-permissions:
-  contents: write
+permissions: # Set Required Permissions For The Runner
+  contents: write 
   packages: write
   
-on:
+on: # Triggers On Tags Created
   push:
-    tags:
+    tags: # Tag Format
       - "v*.*.*"
-    branches:
+    branches: # Only Run On This Branch
       - "main"
   workflow_dispatch:
 
 env:
-  ENGINE_PATH: ${{ secrets.ENGINE_PATH }} #Local Engine Path For Runner
-  PLUGIN_NAME: "FalloutCore" #UPlugin Name
-  BADGE_PATH: "./badges"
-  GIST_ID: "265083e784c36d7e25b4fe8415ba7a56"
+  ENGINE_PATH: ${{ secrets.ENGINE_PATH }} # Local Engine Path For Runner
+  PLUGIN_NAME: "FalloutCore" # UPlugin Name ie.. FalloutCore(.uplugin)
+  BADGE_PATH: "./badges" # Dont Touch
+  GIST_ID: "265083e784c36d7e25b4fe8415ba7a56" #Gist ID
 
 jobs:
   build:
-    runs-on: self-hosted  # Changed to self-hosted runner
-    environment: FalloutCore
-    permissions:
+    runs-on: self-hosted  # Specify It To Use The Local Runner
+    environment: FalloutCore # Environment To Use (That One That Holds The Secrets)
+    permissions: # Environment Permissions
       contents: write
     
     
-    steps:
+    steps: # Download The Repo
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Build Plugin
+      - name: Build Plugin # Use The Engine Path Secret  To Trigger A Build Using RunUAT.bat That Comes With Unreal Engine
         id: build
         shell: cmd
-        run: |
+        run: | # Series Of Commands 1. Announce It Started, 2. Set The Path For The RunUat.bat, 3. Debug The Path, 4. Run RunUat.bat For Building Plugin, 5. Announce Completion For Debug
           echo "Building plugin..."
           set UAT=%ENGINE_PATH%Engine\Build\BatchFiles\RunUAT.bat
           echo "UAT Path: %UAT%"
           call %UAT% BuildPlugin -plugin="%CD%\%PLUGIN_NAME%.uplugin" -package="%CD%\PackagedPlugin"
-          echo "Build completed. Exit code: %ERRORLEVEL%"
-
-      - name: Verify Build Output
+          echo "Build completed. Exit code: %ERRORLEVEL%" 
+          
+      - name: Verify Build Output # For Debugging Purposes Feel Free To Remove
         shell: cmd
         run: |
           echo "Current directory structure:"
@@ -52,24 +52,24 @@ jobs:
           echo "Full directory tree:"
           tree /f
           
-      - name: Generate Build Status Badge
+      - name: Generate Build Status Badge # Manage The Badge For Build Status
         uses: schneegans/dynamic-badges-action@v1.6.0
         with:
-          auth: ${{ secrets.GIST_SECRET }}
-          gistID: ${{ env.GIST_ID }}
-          filename: unreal_plugin_build_status.json
-          label: build
-          message: ${{ steps.build.outcome == 'success' && 'passing' || 'failing' }}
-          color: ${{ steps.build.outcome == 'success' && 'success' || 'critical' }}
-          forceUpdate: true
+          auth: ${{ secrets.GIST_SECRET }} # Token Scoped For Gists
+          gistID: ${{ env.GIST_ID }} # Public Gist Identifier (At The End Of The Gists Url)
+          filename: unreal_plugin_build_status.json # Exact Name Of The Gist File
+          label: build # Set The Label Of The Badge
+          message: ${{ steps.build.outcome == 'success' && 'passing' || 'failing' }} # Dynamically Set The Message Of The Badge
+          color: ${{ steps.build.outcome == 'success' && 'success' || 'critical' }} # Dynamically Set The Color Of The Badge
+          forceUpdate: true # Required Otherwise It May Not Update Even Upon Changing Status (Black Magic)
 
-      - name: Create ZIP Archive
-        if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
+      - name: Create ZIP Archive # (Windows) - Creates A Zip File In The Runners Work Directory Utilizing The Built Files From The Build Step
+        if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/') # Only Creates Zip If The Build Worked
         shell: cmd
         run: |
           powershell Compress-Archive -Path "PackagedPlugin\*" -DestinationPath "${{ env.PLUGIN_NAME }}.zip" -Force
 
-      - name: Upload Artifact
+      - name: Upload Artifact # Upload The Zipped Archive To The Release
         if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
@@ -78,18 +78,18 @@ jobs:
           compression-level: 9
           retention-days: 1
 
-      - name: Create Release
-        if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
+      - name: Create Release # Creates The Release 
+        if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/') # Redundant Check If It Built Successfully
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.PLUGIN_NAME }}.zip
+          files: ${{ env.PLUGIN_NAME }}.zip # Archive To Upload
           draft: false
           prerelease: false
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check Build Status
+      - name: Check Build Status # For Debugging Purposes Feel Free To Remove
         if: steps.build.outcome != 'success'
         run: |
           echo "Build failed!"
