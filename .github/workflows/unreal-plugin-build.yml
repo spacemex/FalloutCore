@@ -44,9 +44,9 @@ jobs:
 
       - name: Create ZIP Archive
         if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
-        run: |
-          Compress-Object -Path "./PackagedPlugin" -DestinationPath "./${{ env.PLUGIN_NAME }}.zip"
         shell: pwsh
+        run: |
+          Compress-Archive -Path "./PackagedPlugin/*" -DestinationPath "./${{ env.PLUGIN_NAME }}.zip" -Force
 
       - name: Create Release
         if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
