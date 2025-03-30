@@ -1,5 +1,9 @@
 ﻿name: Unreal Plugin Build and Release
 
+permissions:
+  contents: write
+  packages: write
+  
 on:
   push:
     tags:
@@ -18,6 +22,9 @@ jobs:
   build:
     runs-on: self-hosted  # Changed to self-hosted runner
     environment: FalloutCore
+    permissions:
+      contents: write
+    
     
     steps:
       - name: Checkout Repository
@@ -58,29 +65,24 @@ jobs:
 
       - name: Create ZIP Archive
         if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
+        shell: cmd
+        run: |
+          powershell Compress-Archive -Path "PackagedPlugin\*" -DestinationPath "${{ env.PLUGIN_NAME }}.zip" -Force
+
+      - name: Upload Artifact
+        if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PLUGIN_NAME }}
-          path: ${{ github.workspace }}/PackagedPlugin/**/*
+          path: PackagedPlugin/**/*
           compression-level: 9
           retention-days: 1
-          
-      - name: Debug Paths
-        shell: cmd
-        run: |
-          echo "Workspace path: %github.workspace%"
-          echo "Current directory:"
-          cd
-          echo "PackagedPlugin contents:"
-          dir /s /b PackagedPlugin
-      
-      
+
       - name: Create Release
         if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            ./${{ env.PLUGIN_NAME }}.zip
+          files: ${{ env.PLUGIN_NAME }}.zip
           draft: false
           prerelease: false
           generate_release_notes: true
