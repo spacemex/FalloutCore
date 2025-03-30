@@ -47,10 +47,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PLUGIN_NAME }}
-          path: ./PackagedPlugin/**
+          path: ${{ github.workspace }}/PackagedPlugin/**/*
           compression-level: 9
           retention-days: 1
           
+      - name: Debug Paths
+        shell: cmd
+        run: |
+          echo "Workspace path: %github.workspace%"
+          echo "Current directory:"
+          cd
+          echo "PackagedPlugin contents:"
+          dir /s /b PackagedPlugin
+      
+      
       - name: Create Release
         if: steps.build.outcome == 'success' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
