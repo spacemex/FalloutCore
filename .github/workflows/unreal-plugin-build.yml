@@ -26,11 +26,25 @@ jobs:
       - name: Build Plugin
         id: build
         shell: cmd
-        continue-on-error: true
         run: |
-          set UAT="${{ env.ENGINE_PATH }}Engine\Build\BatchFiles\RunUAT.bat"
-          call %UAT% BuildPlugin -plugin="${{github.workspace}}/${{ env.PLUGIN_NAME }}.uplugin" -package="./PackagedPlugin"
+          echo "Building plugin..."
+          set UAT=%ENGINE_PATH%Engine\Build\BatchFiles\RunUAT.bat
+          echo "UAT Path: %UAT%"
+          call %UAT% BuildPlugin -plugin="%CD%\%PLUGIN_NAME%.uplugin" -package="%CD%\PackagedPlugin"
+          echo "Build completed. Exit code: %ERRORLEVEL%"
 
+      - name: Verify Build Output
+        shell: cmd
+        run: |
+          echo "Current directory structure:"
+          dir /b
+          echo.
+          echo "Parent directory structure:"
+          dir /b ..
+          echo.
+          echo "Full directory tree:"
+          tree /f
+          
       - name: Generate Build Status Badge
         uses: schneegans/dynamic-badges-action@v1.6.0
         with:
